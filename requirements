@@ -3,4 +3,5 @@ openai
 pypdf
 chromadb
 tiktoken
+asyncio
 
