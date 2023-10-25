@@ -11,15 +11,19 @@ from dotenv import load_dotenv
 
 load_dotenv() # openai_key  .env 선언 사용 
 
-from transformers import BertTokenizer
+
+from transformers import GPT2Tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+
 def tiktoken_len(text):
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    tokens = tokenizer.encode(text, add_special_tokens=False)  # 특수 토큰을 추가하지 않습니다.
+    tokens = tokenizer.tokenize(text)
     return len(tokens)
 
 
 loader = TextLoader("files\jshs-history.txt", encoding='utf-8')
 documents = loader.load()
+# print("Page Content:\n", documents[0].page_content)
+# print("\nMetadata:", documents[0].metadata)
 
 text_splitter = RecursiveCharacterTextSplitter(
         chunk_size =50,

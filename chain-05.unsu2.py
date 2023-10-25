@@ -1,16 +1,11 @@
 from langchain.vectorstores.faiss import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.document_loaders import PyPDFLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.question_answering import load_qa_chain
-
 import asyncio
-
 import pdfplumber
 from collections import namedtuple
-
 from transformers import GPT2Tokenizer
-
 from dotenv import load_dotenv 
 load_dotenv() # openai_key  .env 선언 사용 
 
@@ -18,13 +13,7 @@ tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
 def tiktoken_len(text):
     tokens = tokenizer.tokenize(text)
-    return len(text)
-
-
-# text = "안녕하세요"
-# token_count = tiktoken_len(text)
-# print(token_count)  # 출력: 5
-# quit()
+    return len(tokens)
 
 
 Document = namedtuple('Document', ['page_content', 'metadata'])
@@ -32,8 +21,6 @@ documents =[]
 with pdfplumber.open("files/unsu.pdf") as pdf_document:
     for page_number, page in enumerate(pdf_document.pages):
         text = page.extract_text()
-        # text=text.replace("\n"," ")
-
         metadata = {
             'source': 'files/unsu.pdf',
             'page': page_number + 1
@@ -41,9 +28,10 @@ with pdfplumber.open("files/unsu.pdf") as pdf_document:
         document = Document(page_content=text, metadata=metadata)
         documents.append(document)
 
-# documents 리스트에 저장된 모든 문서 출력
+
 # for doc in documents:
-#     print(f"Page {doc.metadata['page']}:\n{doc.page_content}")
+#     print(f"Page {doc.metadata['page']}" + "="*100)
+#     print(f"{doc.page_content}")
 
 # quit()      
 
@@ -69,7 +57,7 @@ index = FAISS.from_documents(pages, OpenAIEmbeddings())
 
 index.save_local("faiss-unsu-pdf")
 
-query = "아내가 먹고 싶어하는 음식은?"
+query = "아내가 좋아하는 음식은?"
 loop = asyncio.get_event_loop()
 docs = loop.run_until_complete( index.asimilarity_search_with_relevance_scores(query) )
 for doc, score in docs:
@@ -77,7 +65,7 @@ for doc, score in docs:
 
 print("-"*100)
 
-quit()
+
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import RetrievalQAWithSourcesChain
 
