@@ -7,21 +7,34 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.question_answering import load_qa_chain
 import asyncio
 
+import pdfplumber
+from collections import namedtuple
 
 load_dotenv()
-[Document(page_content='test', metadata={'source': 'files\\jshs-history.pdf', 'page': no})]
 
 
-from transformers import BertTokenizer
+from transformers import GPT2Tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+
 def tiktoken_len(text):
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    tokens = tokenizer.encode(text, add_special_tokens=False)  # 특수 토큰을 추가하지 않습니다.
-    return len(tokens)
+    tokens = tokenizer.tokenize(text)
+    return len(tokens )
 
-loader = PyPDFLoader("files\jshs-history.pdf")
-documents = loader.load() 
-print( documents )
-quit()
+# loader = PyPDFLoader("files\jshs-history.pdf")
+# documents = loader.load() 
+Document = namedtuple('Document', ['page_content', 'metadata'])
+documents =[]
+with pdfplumber.open("files/jshs-history.pdf") as pdf_document:
+    for page_number, page in enumerate(pdf_document.pages):
+        text = page.extract_text()
+
+        metadata = {
+            'source': 'files/jshs-history.pdf',
+            'page': page_number + 1
+        }
+        document = Document(page_content=text, metadata=metadata)
+        documents.append(document)
+        
 text_splitter = RecursiveCharacterTextSplitter(
         chunk_size =50,
         chunk_overlap  = 0,
@@ -34,7 +47,7 @@ print( len(pages) )
 i=0
 for p in pages:
     i=i+1
-    print( "{:02d} {}".format(i, tiktoken_len(p.page_content)), p.page_content.replace('\n', ''), p.metadata['source'])
+    print( "{:02d} {:02d} ".format(i, tiktoken_len(p.page_content)), p.page_content, p.metadata['source'])
 
 print("="*00)
 index = FAISS.from_documents(pages , OpenAIEmbeddings())

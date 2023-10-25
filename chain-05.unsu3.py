@@ -8,10 +8,6 @@ load_dotenv() # openai_key  .env 선언 사용
 
 index= FAISS.load_local("faiss-unsu-txt", OpenAIEmbeddings())
 
-index.save_local("unsu-pdf")
-
-
-
 llm_model = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)  
 
 chain = load_qa_chain(llm_model, chain_type="stuff")
