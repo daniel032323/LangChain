@@ -3,6 +3,7 @@ openai
 pypdf
 chromadb
 tiktoken
+transformers
 asyncio
 
 
