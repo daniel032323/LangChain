@@ -7,9 +7,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 
 import asyncio
-from dotenv import load_dotenv 
-
-load_dotenv() # openai_key  .env 선언 사용 
+from dotenv import load_dotenv;load_dotenv() # openai_key  .env 선언 사용 
 
 
 from transformers import GPT2Tokenizer
@@ -42,7 +40,7 @@ for p in pages:
 print("="*100)
 index = FAISS.from_documents(pages , OpenAIEmbeddings())
 
-index.save_local("jshs-history")
+index.save_local("faiss-jshs-history")
 
 query = "현재 교장은?"
 # docs = index.similarity_search(query) 유사도가 없다.

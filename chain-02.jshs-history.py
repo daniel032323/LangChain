@@ -5,7 +5,7 @@ from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv 
 load_dotenv()
 
-index= FAISS.load_local("faiss-jshs", OpenAIEmbeddings())
+index= FAISS.load_local("faiss-jshs-history", OpenAIEmbeddings())
 
 llm_model = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)  
 

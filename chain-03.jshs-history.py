@@ -52,7 +52,7 @@ for p in pages:
 print("="*00)
 index = FAISS.from_documents(pages , OpenAIEmbeddings())
 
-index.save_local("jshs-history")
+index.save_local("faiss-jshs-history-pdf")
 
 query = "현재 교장은?"
 # docs = index.similarity_search(query) 유사도가 없다.
